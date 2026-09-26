@@ -16,10 +16,11 @@
  */
 
 import { execFile } from "node:child_process"
-import { readFile, writeFile, rename, mkdir, chmod } from "node:fs/promises"
+import { readFile, writeFile, rename, mkdir } from "node:fs/promises"
 import path from "node:path"
 import os from "node:os"
 import { defineTool } from "@deepseek-ai/dsh-tools"
+import Schema from "@deepseek-ai/schemastery"
 
 export const name = "bot-screen"
 export const inject = ["tools"]
@@ -27,16 +28,20 @@ export const inject = ["tools"]
 const DENIED = "human_has_control"
 const OWN_TOOL = /^screen_/
 
-const DEFAULTS = {
-  bin: path.join(os.homedir(), "agent-tools/bot-screen/bin/bot-screen"),
-  name: "default",
-  fence: "screenshot,^computer,playwright,(^|_)cua($|_),(^|_)browser,glass",
-}
-
-function readConfig(ctx) {
-  const cfg = ctx?.config ?? {}
-  return { ...DEFAULTS, ...cfg }
-}
+/**
+ * Plugin configuration, validated and defaulted by Schemastery while the plugin
+ * loads. `apply(ctx, config)` receives the resolved value.
+ */
+export const Config = Schema.object({
+  bin: Schema.string()
+    .description("Path to the bot-screen CLI")
+    .default(path.join(os.homedir(), "agent-tools/bot-screen/bin/bot-screen")),
+  name: Schema.string().description("Screen name").default("default"),
+  screenHome: Schema.string().description("Overrides the screen state home").default(""),
+  fence: Schema.string()
+    .description("Comma-separated regexes matched against tool names; screen_* tools are always exempt")
+    .default("screenshot,^computer,playwright,(^|_)cua($|_),(^|_)browser,glass"),
+})
 
 function leasePath(cfg) {
   const home = cfg.screenHome || path.join(os.homedir(), ".bot-screen", cfg.name)
@@ -190,8 +195,8 @@ async function forgetMinted(cfg, id) {
   await writeMinted(cfg, ids)
 }
 
-export function apply(ctx) {
-  const cfg = readConfig(ctx)
+export function apply(ctx, config) {
+  const cfg = config
   const fence = String(cfg.fence)
     .split(",")
     .map((s) => s.trim())

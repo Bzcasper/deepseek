@@ -10,7 +10,8 @@
     "cordis.patch.yml"
   ],
   "dependencies": {
-    "@deepseek-ai/dsh-tools": "0.1.5-rc.3"
+    "@deepseek-ai/dsh-tools": "0.1.5-rc.3",
+    "@deepseek-ai/schemastery": "3.18.2"
   },
   "keywords": [
     "dsh-plugin"
