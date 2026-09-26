@@ -1,0 +1,9 @@
+- insert:
+  - id: bot-screen
+    name: dsh-bot-screen
+    config:
+      bin: /home/bobby/agent-tools/bot-screen/bin/bot-screen
+      name: default
+      # Comma-separated regexes. Matched against tool names, case-insensitively.
+      # `screen_*` is never fenced, so the agent can always inspect the lease.
+      fence: ^screen_,screenshot,^computer,playwright,(^|_)cua($|_),(^|_)browser,glass

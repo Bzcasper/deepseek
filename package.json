@@ -1,0 +1,20 @@
+{
+  "name": "dsh-bot-screen",
+  "version": "1.0.0",
+  "description": "Drive the shared headless Xfce screen (bot-screen) from DeepSeek Harness, with a control-lease fence.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT",
+  "files": [
+    "index.js",
+    "cordis.patch.yml"
+  ],
+  "keywords": [
+    "dsh-plugin"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
